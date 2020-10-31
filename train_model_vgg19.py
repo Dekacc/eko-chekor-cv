@@ -5,8 +5,8 @@ from tensorflow.keras import layers
 from utilities import split_dataset, one_hot_encode
 from tensorflow.keras.preprocessing.image import load_img
 from tensorflow.keras.preprocessing.image import img_to_array
-from tensorflow.keras.applications.vgg16 import preprocess_input
-from tensorflow.keras.applications.vgg16 import VGG16
+from tensorflow.keras.applications.vgg19 import preprocess_input
+from tensorflow.keras.applications.vgg19 import VGG19
 from tensorflow.keras.models import Model
 from os import path
 
@@ -35,8 +35,8 @@ if __name__ == "__main__":
     images_array = np.concatenate(images_list)
     classes_array = np.array(classes_list)
 
-    # Get image features with VGG16
-    model = VGG16()                                                         # Load the model
+    # Get image features with VGG19
+    model = VGG19()                                                         # Load the model
     model = Model(inputs=model.inputs, outputs=model.layers[-2].output)     # Remove the output layer
     image_features = model.predict(images_array)
 

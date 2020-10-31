@@ -5,14 +5,14 @@ from tensorflow.keras import layers
 from utilities import split_dataset, one_hot_encode
 from tensorflow.keras.preprocessing.image import load_img
 from tensorflow.keras.preprocessing.image import img_to_array
-from tensorflow.keras.applications.vgg16 import preprocess_input
-from tensorflow.keras.applications.vgg16 import VGG16
+from tensorflow.keras.applications.densenet import preprocess_input
+from tensorflow.keras.applications.densenet import DenseNet169
 from tensorflow.keras.models import Model
 from os import path
 
 
 INPUT_SIZE = (224, 224)
-NUM_FEATURES = 4096
+NUM_FEATURES = 1664
 
 
 if __name__ == "__main__":
@@ -24,10 +24,10 @@ if __name__ == "__main__":
     for index, row in df.iterrows():
         image_path = path.join('images', row['img_name'])
 
-        image = load_img(image_path, target_size=INPUT_SIZE)                                        # Load the image
-        image = img_to_array(image)                                      # Convert the image pixels to a numpy array
-        image = image.reshape((1, image.shape[0], image.shape[1], image.shape[2]))      # reshape data for the model
-        image = preprocess_input(image)                                        # prepare the image for the VGG model
+        image = load_img(image_path, target_size=INPUT_SIZE)                                           # Load the image
+        image = img_to_array(image)                                         # Convert the image pixels to a numpy array
+        image = image.reshape((1, image.shape[0], image.shape[1], image.shape[2]))         # reshape data for the model
+        image = preprocess_input(image)                                   # prepare the image for the DenseNet169 model
 
         images_list.append(image)
         classes_list.append(one_hot_encode(row['trash_size']))
@@ -35,9 +35,9 @@ if __name__ == "__main__":
     images_array = np.concatenate(images_list)
     classes_array = np.array(classes_list)
 
-    # Get image features with VGG16
-    model = VGG16()                                                         # Load the model
-    model = Model(inputs=model.inputs, outputs=model.layers[-2].output)     # Remove the output layer
+    # Get image features with DenseNet169
+    model = DenseNet169()                                                       # Load the model
+    model = Model(inputs=model.inputs, outputs=model.layers[-2].output)         # Remove the output layer
     image_features = model.predict(images_array)
 
     # Split the dataset 80%/10%/10%
