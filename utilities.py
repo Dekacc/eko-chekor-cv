@@ -8,9 +8,11 @@ def split_dataset(arr):
 
 
 def one_hot_encode(str):
+    if str == 'CLEANED':
+        return [1, 0, 0, 0]
     if str == 'FITS IN A BAG':
-        return [1, 0, 0]
+        return [0, 1, 0, 0]
     elif str == 'FITS IN A WHEELBARROW':
-        return [0, 1, 0]
+        return [0, 0, 1, 0]
     elif str == 'CAR NEEDED':
-        return [0, 0, 1]
+        return [0, 0, 0, 1]

@@ -18,6 +18,7 @@ NUM_FEATURES = 1536
 if __name__ == "__main__":
     # Load the dataset
     df = pd.read_csv('dataset.csv')
+    df = df[df['img_name'].notna()]
     df = df.sample(frac=1, random_state=1)      # Shuffle the dataset
     images_list = []
     classes_list = []
@@ -47,7 +48,7 @@ if __name__ == "__main__":
     # Build a simple dense network
     inputs = keras.Input(shape=(NUM_FEATURES,))
     x = layers.Dense(64, activation="relu")(inputs)
-    outputs = layers.Dense(3)(x)
+    outputs = layers.Dense(4)(x)
 
     model = keras.Model(inputs=inputs, outputs=outputs, name="simple_dense_model")
 
