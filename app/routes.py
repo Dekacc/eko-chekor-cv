@@ -4,7 +4,7 @@ from tensorflow.keras.preprocessing.image import load_img
 import uvicorn
 from tensorflow.keras.applications.resnet import ResNet152
 from tensorflow.keras.models import Model, load_model
-
+import json
 from fastapi import FastAPI, File, UploadFile, Body
 from PIL import Image
 import shutil
@@ -31,8 +31,13 @@ def predict_image(image: UploadFile = File(...)):
 
     img = load_img(folder_name + file_name, target_size=(224, 224))
     result = evaluate_waste(img, resnet_model, model)
-    print(result)
-    return "hi"
+    d = dict()
+    r = result[0]
+    d['no'] = str(r[0])
+    d['bag'] = str(r[1])
+    d['wb'] = str(r[2])
+    d['car'] = str(r[3])
+    return {'d':d}
 
 
 if __name__ == '__main__':
