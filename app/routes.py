@@ -1,14 +1,16 @@
 from typing import Optional
-from evaluate_waste import evaluate_waste
+from evaluate_waste import evaluate_waste, calculate_score
 from tensorflow.keras.preprocessing.image import load_img
 import uvicorn
+from datetime import time, datetime
 from tensorflow.keras.applications.resnet import ResNet152
 from tensorflow.keras.models import Model, load_model
 import json
 from fastapi import FastAPI, File, UploadFile, Body
 from PIL import Image
 import shutil
-
+import urllib
+import os
 app = FastAPI()
 
 folder_name = 'images/'
@@ -19,25 +21,32 @@ def home():
     return "home"
 
 
+
+
+def download_image_from_url(url, folder_name):
+    try:
+        img_name = datetime.now().timestamp()
+        img_name = os.path.join("img_" + str(img_name) + ".jpg")
+        urllib.request.urlretrieve(url, folder_name + img_name)
+        print("can")
+        return img_name
+    except:
+        print("cant")
+
+
 @app.post("/predict")
-def predict_image(image: UploadFile = File(...)):
+def predict_image(image_url: str):
     # image = Image.open(image)
     # result = evaluate_waste(image)
     # # result = None
     # return {"image": result}
-    file_name = image.filename
-    with open(folder_name + file_name, "wb") as buffer:
-        shutil.copyfileobj(image.file, buffer)
+    image_name = download_image_from_url(image_url, folder_name)
 
-    img = load_img(folder_name + file_name, target_size=(224, 224))
+    img = load_img(folder_name + image_name, target_size=(224, 224))
     result = evaluate_waste(img, resnet_model, model)
-    d = dict()
+
     r = result[0]
-    d['no'] = str(r[0])
-    d['bag'] = str(r[1])
-    d['wb'] = str(r[2])
-    d['car'] = str(r[3])
-    return {'d':d}
+    return {'result':calculate_score(r)}
 
 
 if __name__ == '__main__':
