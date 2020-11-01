@@ -1,3 +1,0 @@
-tensorflow-gpu
-pandas
-pillow
